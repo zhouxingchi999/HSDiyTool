@@ -1,0 +1,332 @@
+cc.Class({
+    extends: cc.Component,
+
+    properties: {
+        // foo: {
+        //    default: null,
+        //    url: cc.Texture2D,  // optional, default is typeof default
+        //    serializable: true, // optional, default is true
+        //    visible: true,      // optional, default is true
+        //    displayName: 'Foo', // optional
+        //    readonly: false,    // optional, default is false
+        // },
+        // ...
+        /*clipPic:{
+            default:null,
+            type:cc.Node
+        },*/
+        dragon:{
+            default:null,
+            type:cc.Sprite
+        }
+        ,
+        pic:{
+            default:null,
+            type:cc.Sprite
+        }
+        ,
+        cardBack:{
+            default:null,
+            type:cc.Sprite
+        },
+        nameL:{
+            default:null,
+            type:cc.Label
+        },
+        gem:{
+            default:null,
+            type:cc.Sprite
+        },
+        tag:{
+            default:null,
+            type:cc.Sprite
+        },
+        race:{
+            default:null,
+            type:cc.Label
+        },
+        raceEdit:{
+            default:null,
+            type:cc.EditBox
+        },
+        nameEdit:{
+            default:null,
+            type:cc.EditBox
+        },
+        AHCControl:{
+            default:null,
+            type:cc.Node
+        },
+        cost:{
+            default:null,
+            type:cc.Label
+        },
+        ack:{
+            default:null,
+            type:cc.Label
+        },
+        health:{
+            default:null,
+            type:cc.Label
+        },
+        message:{
+            default:null,
+            type:cc.Label
+        },
+        des:{
+            default:null,
+            type:cc.Label
+        },
+        desEdit:{
+            default:null,
+            type:cc.EditBox
+        },
+        increAudio: {
+            default: null,
+            url: cc.AudioClip
+        }
+    },
+    backGroundCallback:function(){
+        this.releaseControl(null);
+    }
+    ,
+    test:function(){
+        cc.loader.load({id: 'D:\\HelloWorld.png', type: 'png'}, function (err, tex) {
+    cc.log('Should load a texture from RESTful API by specify the type: ' + (tex instanceof cc.Texture2D));
+});
+
+    /*
+        var msg = jsb.fileUtils.getWritablePath();
+        var pic = this.pic
+        this.message.string = msg;
+        var url = cc.url.raw(" ")
+        
+        this.message.string += "\n"+url;
+        cc.loader.loadRes("ProIcon", cc.SpriteFrame, function (err, spriteFrame) {
+            pic.getComponent(cc.Sprite).spriteFrame = spriteFrame;
+});     
+        jsb.fileUtils.addSearchPath(msg,true)
+        jsb.fileUtils.addSearchPath(url,true)
+        cc.log(jsb.fileUtils.getSearchPaths())
+        this.message.string +="\n HelloWorld path:"+jsb.fileUtils.fullPathForFilename("HelloWorld.png");
+         cc.log("WriteablePath:",msg);*/
+    }
+    ,
+    releaseControl:function(obj){
+        if(this.control == obj) return
+        switch (this.control){
+            case this.AHCControl:  this.inactiveAHCControl(); break;
+            
+            default:break;
+        }
+        this.control = obj
+    }
+    ,
+    incrementLabel:function(label,num,min,max){
+        var proxyL = label.getComponent("LabelProxy")
+        var val = parseInt(proxyL.string) 
+        if(isNaN(val)) return;
+        val+=num
+        if(val>max||val<min) return
+        
+        proxyL.string = ""+val
+        cc.audioEngine.setEffectsVolume(0.25)
+        cc.audioEngine.playEffect(this.increAudio,false)
+        
+        //var labelLine = label.getComponent("LabelLine")
+        //labelLine.updateString();
+    },
+    activeAHCControlCCall:function(){
+        this.releaseControl(this.AHCControl);
+        //this.AHCControl.opacity = 255;
+        this.AHCControl.setPositionX(0)
+    },
+    inactiveAHCControl:function(){
+        //this.AHCControl.opacity = 0;
+        this.AHCControl.setPositionX(1000)
+    }
+    ,    
+    increAck:function(){
+        this.incrementLabel(this.ack,1,0,99);
+    },
+    decreAck:function(){
+        this.incrementLabel(this.ack,-1,0,99);
+    },
+    increHealth:function(){
+        this.incrementLabel(this.health,1,0,99);
+    },
+    decreHealth:function(){
+        this.incrementLabel(this.health,-1,1,99);
+    },
+    increCost:function(){
+        this.incrementLabel(this.cost,1,0,99);
+    },
+    decreCost:function(){
+        this.incrementLabel(this.cost,-1,0,99);
+    },
+    descriptionDidBegin:function(){
+        this.releaseControl(this.desEdit);
+        
+        this.des.node.removeAllChildren();
+        this.des.node.opacity = 0;
+        
+        this.desEdit.string = this.des.getComponent("resizeBoldLabel").description  ;
+        this.desEdit.fontSize = this.des.fontSize;
+        
+        this.message.string += "Description text begin\n";
+        cc.log("Description text begin");
+    },
+    descriptionDidChange:function(text){
+        this.message.string += "Description text Change\n";
+        
+    }
+    ,
+    descriptionDidEnd:function(){
+        cc.log("Description text end, text:",this.desEdit.string);
+        this.message.string += "Description text end\n";
+        this.des.node.opacity = 255;
+
+        this.des.getComponent("resizeBoldLabel").description = this.desEdit.string;
+    }
+    ,
+    nameDidBegin:function(){
+        this.releaseControl(this.nameEdit);
+        //this.message.string += "name text begin\n"
+        // this.nameL.node.removeAllChildren()
+        // this.nameL.string = this.nameEdit.string
+        this.nameL.node.opacity = 0;
+        this.nameEdit.string = this.nameL.getComponent("Name").nameStr;
+        cc.log("Description text begin");
+    },
+    nameDidChange:function(text){
+        
+    }
+    ,
+    nameDidEnd:function(){
+        this.nameL.node.opacity = 255;
+        //this.message.string += "name text end\n"
+        this.nameL.getComponent("Name").nameStr = this.nameEdit.string;
+        //this.nameL.getComponent("Name").nameStr = this.nameEdit.string;
+    },
+    raceDidBegin:function(){
+        this.releaseControl(this.raceEdit);
+        this.race.node.opacity = 0;
+        this.raceEdit.string = this.race.getComponent("LabelProxy").string;
+        //this.message.string += "race text begin\n"
+        cc.log("Description text begin");
+        
+    },
+    raceDidChange:function(text){
+        
+    }
+    ,
+    raceDidEnd:function(){
+        this.race.node.opacity = 255;
+        
+        
+        var lp = this.race.getComponent("LabelProxy")
+        lp.string = this.raceEdit.string;
+        
+        
+        this.tag.node.opacity = lp.string.length<1? 0:255;
+        //this.message.string += "race text end\n"
+        //this.desEdit.string = this.des.getComponent("resizeBoldLabel").description
+    },
+    loadSPFToSpr:function(spr,uri,spriteName){
+        cc.loader.loadRes(uri, cc.SpriteAtlas, function (err, SpriteAtlas) {
+            cc.log("SpriteAtlas:", SpriteAtlas)
+            spr.spriteFrame = SpriteAtlas.getSpriteFrame(spriteName);
+        })
+    }
+    ,
+    changeRarity:function(){
+        var end = null
+        var pre = null
+        this.releaseControl(this.gem)
+        for(var i in this.rarityStr){
+            if(this.rarityStr[i].EN == this.rarity.EN){
+                cc.log(i)
+                if(end!=null) pre  = end
+            }
+            
+            end = this.rarityStr[i]
+        }
+        
+        if(pre==null) pre = end//
+    
+        cc.log("change gem:",this.cardType.RAW+"/"+this.cardType.EN+pre.EN)//+".plist/"+this.cardType.EN+pre.EN)
+        if(pre != this.rarityStr.BASIC){
+            this.gem.node.opacity = 255
+            this.loadSPFToSpr(this.gem,this.cardType.RAW,this.cardType.EN+pre.EN)//+".plist/"+this.cardType.EN+pre.EN)
+        }
+        else
+            this.gem.node.opacity = 0
+        
+        if(pre === this.rarityStr.LEGEND)
+            this.dragon.node.opacity = 255;
+        else
+            this.dragon.node.opacity = 0;
+        this.rarity = pre
+    },
+    captureScreen: function(){
+        var renderTexture = cc.RenderTexture.create(599,599);
+        renderTexture.begin();
+        this.node._sgNode.visit();
+        renderTexture.end();
+        this.node.addChild( renderTexture , 9999 );
+    }
+    ,
+    // use this for initialization
+    onLoad: function () {
+    
+        this.cClassesStr = {WARRIOR:{EN:"warrior",CN:"战士"},
+        PRIEST:{EN:"priest",CN:"牧师"},
+        WARLOCK:{EN:"warlock",CN:"术士"},
+        HUNTER:{EN:"hunter",CN:"猎人"},
+        MAGE:{EN:"mage",CN:"法师"},
+        PALADIN:{EN:"paladin",CN:"圣骑士"},
+        DRUID:{EN:"druid",CN:"德鲁伊"},
+        SHAMAN:{EN:"shaman",CN:"萨满"},
+        ROUGE:{EN:"rouge",CN:"盗贼"},
+        NETURAL:{EN:"netural",CN:"中立"},
+        };
+        
+        this.cardTypeStr = {
+            MINION:{EN:"m_",CN:"随从",RAW:"minion"},
+            SPELL:{EN:"s_",CN:"法术",RAW:"spell"},
+            WEAPON:{EN:"w_",CN:"武器",RAW:"weapon"},
+        }
+        
+        this.rarityStr = {
+            BASIC:{EN:"basic",CN:"基础"},
+            NORMAL:{EN:"normal",CN:"普通"},
+            RARE:{EN:"rare",CN:"稀有"},
+            EPIC:{EN:"epic",CN:"史诗"},
+            LEGEND:{EN:"legend",CN:"传说"},
+        }
+        
+        this.cclass = this.cClassesStr.ROUGE
+        this.rarity = this.rarityStr.RARE
+        this.cardType = this.cardTypeStr.MINION
+        
+        //     this.desEdit.enabled = true
+        //     this.raceEdit.enabled = true
+        //     this.nameEdit.enabled = true
+        
+        // this.node.runAction(cc.sequence(cc.delayTime(3),cc.callFunc(function(){
+
+        //     this.des.node.opacity = 255
+        //     this.nameL.node.opacity = 255
+        //     this.race.node.opacity = 255
+        // },this)
+        // ))
+        
+        cc.log(this.cclass)
+        cc.log("RenderTexture:",cc.RenderTexture)
+    },  
+
+    // called every frame, uncomment this function to activate update callback
+    // update: function (dt) {
+
+    // },
+});
