@@ -3,3 +3,5 @@ This is a html5 tool for hearthstone players to quickly make their own cards alt
 
 The project is create by a cross platform game egine [cocos creator](http://www.cocos2d-x.org/download).
 Currently still under construction. 
+
+This branch is for web version
