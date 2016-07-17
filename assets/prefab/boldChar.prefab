@@ -29,7 +29,7 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 99.77,
+      "width": 97.97,
       "height": 40
     },
     "_children": [],
@@ -78,7 +78,7 @@
     "_lineHeight": 40,
     "_enableWrapText": true,
     "_N$file": {
-      "__uuid__": "19f535f7-83b4-4254-bfa2-7bf0d3929506"
+      "__uuid__": "2bc21299-e33f-467b-a1bc-0376ef9a5912"
     },
     "_isSystemFontUsed": false,
     "_N$string": "Label",

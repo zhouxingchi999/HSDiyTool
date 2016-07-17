@@ -91,9 +91,11 @@ cc.Class({
     }
     ,
     test:function(){
-        cc.loader.load({id: 'D:\\HelloWorld.png', type: 'png'}, function (err, tex) {
-    cc.log('Should load a texture from RESTful API by specify the type: ' + (tex instanceof cc.Texture2D));
-});
+  
+    this.captureScreen();
+    //    cc.loader.load({id: 'D:\\HelloWorld.png', type: 'png'}, function (err, tex) {
+    //cc.log('Should load a texture from RESTful API by specify the type: ' + (tex instanceof cc.Texture2D));
+//});
 
     /*
         var msg = jsb.fileUtils.getWritablePath();
@@ -273,7 +275,9 @@ cc.Class({
         renderTexture.begin();
         this.node._sgNode.visit();
         renderTexture.end();
-        this.node.addChild( renderTexture , 9999 );
+        this.node._sgNode.addChild( renderTexture , 9999 );
+        
+       // this.node.addChild( renderTexture , 9999 );
     }
     ,
     // use this for initialization
