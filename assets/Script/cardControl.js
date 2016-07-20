@@ -275,7 +275,9 @@ cc.Class({
         renderTexture.begin();
         this.node._sgNode.visit();
         renderTexture.end();
-        this.node._sgNode.addChild( renderTexture , 9999 );
+        
+        renderTexture. saveToFile("d:\\demo.png","PNG"); 
+        //this.node._sgNode.addChild( renderTexture , 9999 );
         
        // this.node.addChild( renderTexture , 9999 );
     }
