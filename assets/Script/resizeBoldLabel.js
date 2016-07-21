@@ -51,25 +51,28 @@ cc.Class({
             
             if("，".indexOf(c)!=-1) charWid = this.fontSize*0.9858;
             
+            /* Chinese symbols are treated like words in browser
             if("。：，；、".indexOf(c)!=-1&&i===desStr.length-1){
                 if("：；".indexOf(c)!=-1){
                     charWid = this.fontSize*0.65625;
                 }else{
                     charWid = this.fontSize*0.40625;
                 }
-            }
+            }*/
             
             if(charWid===0&&code!=10) continue;        
             
             
             if(i==boldWords[k]){//当前字符需要加粗
                 var f = this.fontSize
-                if("：；".indexOf(c)!=-1)
+
+             /* special handling for simulator and native palform 
+               if("：；".indexOf(c)!=-1)
                     boldWords[k]=cc.v2(wid+charWid/2-f/9,j);
                 else
                     if("。，、".indexOf(c)!=-1)
                         boldWords[k]=cc.v2(wid+charWid/2-f/3,j);
-                    else
+                    else*/
                         boldWords[k]=cc.v2(wid+charWid/2,j);
                 
                 k++;
@@ -78,13 +81,13 @@ cc.Class({
             //cc.log("i,lines:",i,lines)
             if(wid+charWid>lineWidths[j]||(code===10)){
                 //cc.log("code:",code)
-                if("。：，；、".indexOf(c)!=-1){
+                /*if("。：，；、".indexOf(c)!=-1){
                     if("：；".indexOf(c)!=-1){
                         charWid = this.fontSize*0.65625;
                     }else{
                         charWid = this.fontSize*0.40625;
                     }
-                }
+                }*/
                 if(wid == 0&&code==10) continue
                 if(code != 10)
                     l+=c+'\n';

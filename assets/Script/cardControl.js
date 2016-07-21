@@ -22,7 +22,7 @@ cc.Class({
         ,
         pic:{
             default:null,
-            type:cc.Sprite
+            type:cc.Node
         }
         ,
         cardBack:{
@@ -87,6 +87,7 @@ cc.Class({
         }
     },
     backGroundCallback:function(){
+        cc.log("Background release control")
         this.releaseControl(null);
     }
     ,
@@ -118,10 +119,21 @@ cc.Class({
         if(this.control == obj) return
         switch (this.control){
             case this.AHCControl:  this.inactiveAHCControl(); break;
-            
+            case this.pic   : this.picClose(); break;
             default:break;
         }
         this.control = obj
+    }
+    ,
+    picClose:function(){
+           var picSet = this.pic.getComponent("picSet");
+           var mvPic = picSet.mvPic;
+           var posFrame = picSet.posFrame;
+           var coin = picSet.coin;
+           coin.opacity = 0;
+           mvPic.opacity = 0;
+            cc.log("Pic closed")
+            
     }
     ,
     incrementLabel:function(label,num,min,max){

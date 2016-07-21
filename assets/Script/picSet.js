@@ -22,6 +22,10 @@ cc.Class({
         posFrame:{
             default:null,
             type:cc.Node
+        },
+        coin:{
+            default:null,
+            type:cc.Node
         }
     },
 
@@ -35,35 +39,46 @@ cc.Class({
     var listener = {
         event: cc.EventListener.TOUCH_ONE_BY_ONE,
         onTouchBegan: function (touches, event) {
-            cc.log('Touch Began: ' + event);
+           // cc.log('Touch Began: ' + event);
             //for(var i in event)
             //    cc.log(i)
                 //var touch = node.convertTouchToNodeSpace(cc.Vec2(touches.getLocationX(),touches.getLocationY()))
             
+            
+
             var x = touches.getLocationX()
             var y = touches.getLocationY()
-            cc.log(x,y);
-            cc.log(oX,oY,oWid,oHeight);
+            //cc.log(x,y);
+            //cc.log(oX,oY,oWid,oHeight);
             if(x<oX+oWid/2&&x>oX-oWid/2&&y<oY+oHeight/2&&y>oY-oHeight/2){
+                var cardControl = node.node.parent.getComponent("cardControl");
+                cardControl.releaseControl(node.node);
+
+                event.stopPropagation();
+                node.mvPic.opacity = 128;
                 return true;
             }
             
             return false    ; //这里必须要写 return true
         },
         onTouchMoved: function (touches, event) {
-            cc.log('Touch Moved: ' + event);
+            //cc.log('Touch Moved: ' + event);
             var delta = touches.getDelta()
             var x = delta.x;
             var y = delta.y;
-            cc.log(node)
             node.pic.x +=x;
             node.pic.y +=y;
             node.mvPic.x +=x;
             node.mvPic.y +=y;
-           cc.log("Delta:",touches.getDelta())
+            node.coin.x +=x;
+            node.coin.y +=y;
+           //cc.log("Delta:",touches.getDelta())
         },
         onTouchEnded: function (touches, event) {
            cc.log('Touch Ended: ' + event);
+           //var cardControl = node.node.parent.getComponent("cardControl");
+           
+           //this.picControl = true;//It seems this version creator does't support swallow touch event
         },
         onTouchCancelled: function (touches, event) {
            cc.log('Touch Cancelled: ' + event);

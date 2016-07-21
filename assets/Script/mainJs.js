@@ -5,6 +5,7 @@ var bytesHandler;
 var thisRef;
 var MAX_HEIGHT = 300;
 var spImg;
+var mvImg;
 var maxHeight = 512
 var maxWid = 640
 function loadLocalimg(uri)
@@ -28,7 +29,12 @@ function loadLocalimg(uri)
 		var texture=spriteFrame.getTexture();
 		texture.initWithElement(this);
 		texture.handleLoadedTexture();
-		
+	
+        var sp = mvImg.getComponent('cc.Sprite').spriteFrame;
+        var mvTex=sp.getTexture();
+		mvTex.initWithElement(this);
+		mvTex.handleLoadedTexture();
+
 		var h = texture.pixelHeight
 		var w = texture.pixelWidth
 		
@@ -48,6 +54,9 @@ function loadLocalimg(uri)
 		spImg.scaleX = w/spImg.width
 		spImg.scaleY = h/spImg.height
 		
+        mvImg.scaleX = w/spImg.width
+		mvImg.scaleY = h/spImg.height
+
 		cc.log("width="+spImg.width);
 		cc.log("height="+spImg.height);
 		n++;
@@ -93,7 +102,9 @@ cc.Class({
         img:{
             default:null,type:cc.Node
         },
-        
+        mvPic:{
+            default:null,type:cc.Node
+        }
     },
 
     onUpload:function(activate)
@@ -116,6 +127,7 @@ cc.Class({
     onLoad: function () {
         
     spImg=this.img;
+    mvImg=this.mvPic;
     var texture=spImg.getComponent('cc.Sprite').spriteFrame.getTexture();
     var n=0;
     n++;
