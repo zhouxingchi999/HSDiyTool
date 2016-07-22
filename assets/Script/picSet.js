@@ -42,20 +42,27 @@ cc.Class({
            // cc.log('Touch Began: ' + event);
             //for(var i in event)
             //    cc.log(i)
-                //var touch = node.convertTouchToNodeSpace(cc.Vec2(touches.getLocationX(),touches.getLocationY()))
-            
+            var point = touches.getLocation ( );
+            var iPoint = node.node.convertToNodeSpace(point)
             
 
-            var x = touches.getLocationX()
-            var y = touches.getLocationY()
+            var x = iPoint.x;
+            var y = iPoint.y;
             //cc.log(x,y);
             //cc.log(oX,oY,oWid,oHeight);
             if(x<oX+oWid/2&&x>oX-oWid/2&&y<oY+oHeight/2&&y>oY-oHeight/2){
                 var cardControl = node.node.parent.getComponent("cardControl");
+                var tHeight = node.mvPic.height*node.mvPic.scaleY/2;
+                var rotation = node.mvPic.rotation/180*Math.PI;
                 cardControl.releaseControl(node.node);
 
                 event.stopPropagation();
                 node.mvPic.opacity = 128;
+                node.coin.opacity = 255;
+
+                node.coin.x = node.mvPic.x - Math.sin(rotation)*tHeight;
+                node.coin.y = node.mvPic.y - Math.cos(rotation)*tHeight;
+
                 return true;
             }
             

@@ -84,6 +84,10 @@ cc.Class({
         increAudio: {
             default: null,
             url: cc.AudioClip
+        },
+        waterMark:{
+            default: null,
+            type:cc.Sprite
         }
     },
     backGroundCallback:function(){
@@ -120,7 +124,8 @@ cc.Class({
         switch (this.control){
             case this.AHCControl:  this.inactiveAHCControl(); break;
             case this.pic   : this.picClose(); break;
-            default:break;
+            default: 
+                if(this.control!=null&&this.control.close!=null) this.control.close(); break;
         }
         this.control = obj
     }
@@ -294,25 +299,39 @@ cc.Class({
        // this.node.addChild( renderTexture , 9999 );
     }
     ,
+    changeClass:function(classID){
+        var sp = this.cardBack
+        var loadName = this.cardType.EN+this.cClassesStr[classID].EN;
+        var atlasName = this.cardType.RAW;
+
+        cc.loader.loadRes(atlasName, cc.SpriteAtlas, function (err, SpriteAtlas) {
+            //cc.log("SpriteAtlas:", SpriteAtlas)
+            //cc.log(spName,spr);
+            cc.log(SpriteAtlas,loadName)
+            sp.spriteFrame = SpriteAtlas.getSpriteFrame(loadName);
+        })
+
+        this.classID = classID
+    }
+    ,
     // use this for initialization
     onLoad: function () {
     
-        this.cClassesStr = {WARRIOR:{EN:"warrior",CN:"战士"},
-        PRIEST:{EN:"priest",CN:"牧师"},
-        WARLOCK:{EN:"warlock",CN:"术士"},
-        HUNTER:{EN:"hunter",CN:"猎人"},
-        MAGE:{EN:"mage",CN:"法师"},
-        PALADIN:{EN:"paladin",CN:"圣骑士"},
-        DRUID:{EN:"druid",CN:"德鲁伊"},
-        SHAMAN:{EN:"shaman",CN:"萨满"},
-        ROUGE:{EN:"rouge",CN:"盗贼"},
-        NETURAL:{EN:"netural",CN:"中立"},
-        };
-        
+        this.cClassesStr = [{EN:"warrior",CN:"战士"},
+        {EN:"priest",CN:"牧师"},
+        {EN:"warlock",CN:"术士"},
+        {EN:"hunter",CN:"猎人"},
+        {EN:"mage",CN:"法师"},
+        {EN:"paladin",CN:"圣骑士"},
+        {EN:"druid",CN:"德鲁伊"},
+        {EN:"shaman",CN:"萨满"},
+        {EN:"rouge",CN:"盗贼"},
+        {EN:"netural",CN:"中立"},
+        ]
         this.cardTypeStr = {
             MINION:{EN:"m_",CN:"随从",RAW:"minion"},
             SPELL:{EN:"s_",CN:"法术",RAW:"spell"},
-            WEAPON:{EN:"w_",CN:"武器",RAW:"weapon"},
+            WEAPON:{EN:"w_",CN:"武器",RAW:"w"},
         }
         
         this.rarityStr = {
@@ -323,7 +342,7 @@ cc.Class({
             LEGEND:{EN:"legend",CN:"传说"},
         }
         
-        this.cclass = this.cClassesStr.ROUGE
+        this.classID = this.cClassesStr[4]
         this.rarity = this.rarityStr.RARE
         this.cardType = this.cardTypeStr.MINION
         
@@ -339,7 +358,7 @@ cc.Class({
         // },this)
         // ))
         
-        cc.log(this.cclass)
+        cc.log(this.classID)
         cc.log("RenderTexture:",cc.RenderTexture)
     },  
 

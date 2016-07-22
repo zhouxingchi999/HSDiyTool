@@ -34,23 +34,34 @@ cc.Class({
 
         var mvPic = this.mvPic
         var pic = this.pic
+        //var mvPoint = node.convertToNodeSpace(this.mvPic.position)
         var isScale = false;//If true, operate scaling
         var accLength = 0;
         var op_threshold = this.op_threshold
         var oPoint
         var oRotation = this.mvPic.rotation;
+        cc.log("mvPoint",node.position);
+        cc.log("mvPosition",mvPic.position)
         var listener = {
             event: cc.EventListener.TOUCH_ONE_BY_ONE,
             onTouchBegan: function (touches, event) {
                 var point = touches.getLocation ( );
-                var iPoint = node.convertToNodeSpace(point)
+                var iPoint = node.parent.convertToNodeSpace(point)
+                
+                
+                oPoint = iPoint;
+                oDist = cc.pDistance(oPoint,mvPic.position);
+                cc.log("iPoint:",iPoint);
+                cc.log("point:",point);
 
-                cc.log("oRotation:",oRotation);
-                var x = iPoint.x;
-                var y = iPoint.y;
-                oPoint = point;
+                point = node.convertToNodeSpace(point)
+                var x = point.x;
+                var y = point.y;
                 if(x>0&&y>0&&x<node.width&&y<node.height){
                     event.stopPropagation();
+                    oScaleX = mvPic.scaleX;
+                    oScaleY = mvPic.scaleY;
+
                     cc.log("Original scaleXY",oScaleX,oScaleY);
                     return true;
                 }
@@ -59,14 +70,15 @@ cc.Class({
             },
             onTouchMoved: function (touches, event) {
                 var delta = touches.getDelta()
-                var x = delta.x;
-                var y = delta.y;
-                var point = touches.getLocation();
-                 
+                var point = node.parent.convertToNodeSpace(touches.getLocation());
+                
                 var dist = cc.pDistance(point, mvPic.position);
                
                 var oVec = cc.v2(oPoint.x,oPoint.y).sub(mvPic.position)
-                var nVec = cc.v2(point.x,point.y).sub(mvPic.position)   
+                var nVec = cc.v2(point.x,point.y).sub(mvPic.position) 
+                cc.log(oVec);
+                cc.log(nVec);
+
                 var cross = cc.pCross(nVec,oVec)
                 var fact = cross>0?1:-1; 
                 var r = cc.pAngle(oVec,nVec)   
@@ -74,35 +86,30 @@ cc.Class({
                 var height = mvPic.height/2;
                 
                 accLength+=cc.pLength(delta);
-                cc.log("acc",accLength);
-                if(accLength<op_threshold){
-                     var v1 = cc.v2(point.x - oPoint.x, point.y - oPoint.y)
-                     var r2 = cc.pAngle(v1,oVec)*180/Math.PI;
+                //cc.log("acc",accLength);
+                if(accLength<op_threshold){//within a short routine starting form initial touch point 
+                     var v1 = cc.v2(point.x - oPoint.x, point.y - oPoint.y)//vec form oPoint to current touch point
+                     var r2 = cc.pAngle(v1,cc.v2(node.x-mvPic.x,node.y-mvPic.y))*180/Math.PI;//Angle in degree
                      //cc.log(oPoint)
                      //cc.log("x,y off:",offX,offY);
-                     cc.log(r2)
+                     //cc.log(r2)
                      if(r2>135||r2<45) isScale = true;
                      else
                         isScale = false;                   
-                }
-                
-                if(isScale){
-            
-    
-
+                }else if(isScale){//scaling mode
                     var proj = Math.cos(r)*dist;
-                    var factor = proj/(height*mvPic.scaleY);
+                    
+                    var factor = proj/oDist;
 
+                    mvPic.scaleX =factor*oScaleX;
+                    mvPic.scaleY =factor*oScaleY;
 
-                    mvPic.scaleX *=factor;
-                    mvPic.scaleY *=factor;
-
-                    pic.scaleX *=factor;
-                    pic.scaleY *=factor;
+                    pic.scaleX =factor*oScaleX;
+                    pic.scaleY =factor*oScaleY;
 
                     node.x = mvPic.x - Math.sin(theta)*proj;
                     node.y = mvPic.y - Math.cos(theta)*proj;
-                }else{
+                }else{//rotation mode
                     r*=fact;
                     //cc.log("Rotation f: ",r,fact)
                     //cc.log(cc.pCross(oVec,nVec))
